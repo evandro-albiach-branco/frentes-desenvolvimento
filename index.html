@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MonitoraEA · Painel Institucional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#E7EDF4;
+  --card:#FBFCFD;
+  --card-hi:#F1F4F8;
+  --ink:#131619;
+  --ink-soft:#2C3035;
+  --muted:#5F6570;
+  --dim:#96A0AA;
+  --rule:#D5DBE3;
+  --rule-strong:#B4BBC4;
+  --primary:#1F3D2E;
+  --accent:#8B6A2F;
+  /* 4 buckets */
+  --pronto:#4FB07A;
+  --desenv:#4A94D8;
+  --plan:#D9A128;
+  --aguard:#E05A50;
+  --pronto-tint:#DCF0E2;
+  --desenv-tint:#DAE9F6;
+  --plan-tint:#F5E4C0;
+  --aguard-tint:#F7DDD8;
+  --pronto-soft:#EEF7F0;
+  --desenv-soft:#EDF3F9;
+  --plan-soft:#FAF3E0;
+  --aguard-soft:#FBECE8;
+  --continuo:#7A8FA6;
+  --continuo-tint:#E1E7EE;
+  --continuo-soft:#F0F3F6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{background:var(--paper);color:var(--ink);
+  font-family:'Public Sans',system-ui,sans-serif;
+  font-size:15px;line-height:1.55;font-weight:400;
+  padding:48px 44px 96px;letter-spacing:-.005em;
+  font-feature-settings:'ss01','ss02'}
+.app{max-width:1320px;margin:0 auto}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.serif{font-family:'Source Serif 4',ui-serif,Georgia,serif;font-style:italic;font-weight:400}
+
+/* ═══════ HEADER ═══════ */
+.head{padding-bottom:36px;margin-bottom:36px;border-bottom:1px solid var(--rule-strong)}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:22px;font-weight:500}
+h1{font-family:'Public Sans',sans-serif;font-weight:500;
+  font-size:clamp(44px,4.8vw,62px);line-height:1;letter-spacing:-.028em;color:var(--ink)}
+h1 .tag{color:var(--muted);font-weight:400;font-size:.58em;
+  display:block;margin-top:12px;letter-spacing:-.01em}
+.h-sub{color:var(--muted);margin-top:24px;max-width:640px;font-size:16px;line-height:1.55}
+
+/* ═══════ TABS ═══════ */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--rule-strong);
+  margin-bottom:44px;position:sticky;top:0;z-index:30;background:var(--paper);
+  padding-top:2px}
+.tab-btn{background:none;border:none;padding:18px 26px 20px;
+  font-family:'Public Sans',sans-serif;font-size:15px;font-weight:500;
+  color:var(--dim);cursor:pointer;position:relative;letter-spacing:-.005em;
+  transition:color .15s;display:flex;align-items:center;gap:12px}
+.tab-btn:hover{color:var(--muted)}
+.tab-btn.active{color:var(--ink)}
+.tab-btn.active::after{content:"";position:absolute;left:26px;right:26px;bottom:-1px;
+  height:2px;background:var(--primary)}
+.tab-btn .n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);
+  letter-spacing:.08em;font-weight:400}
+.tab-btn.active .n{color:var(--accent)}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fade .28s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ═══════ TAB 1 · STATUS CARDS ═══════ */
+.status-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+  background:var(--rule);border:1px solid var(--rule);overflow:hidden;border-radius:3px;
+  margin-bottom:52px}
+.stcard{background:var(--card);padding:28px 26px;cursor:pointer;
+  position:relative;transition:background .18s}
+.stcard:hover{background:var(--card-hi)}
+.stcard.active{background:var(--card-hi)}
+.stcard.active::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--tk)}
+.stcard[data-b="pronto"]{--tk:var(--pronto);--tint:var(--pronto-tint)}
+.stcard[data-b="desenv"]{--tk:var(--desenv);--tint:var(--desenv-tint)}
+.stcard[data-b="plan"]{--tk:var(--plan);--tint:var(--plan-tint)}
+.stcard[data-b="aguard"]{--tk:var(--aguard);--tint:var(--aguard-tint)}
+.st-dot{width:10px;height:10px;border-radius:50%;background:var(--tk);margin-bottom:16px}
+.st-label{font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  margin-bottom:14px;font-weight:500}
+.st-num{font-family:'Public Sans',sans-serif;font-weight:400;font-size:56px;
+  line-height:1;color:var(--ink);letter-spacing:-.03em}
+.st-num .of{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--dim);
+  font-weight:400;margin-left:6px}
+.st-desc{font-size:13.5px;color:var(--muted);margin-top:16px;line-height:1.55;
+  max-width:240px}
+
+/* ═══════ TAB 1 · PORTFOLIO ═══════ */
+.portfolio{margin-bottom:60px}
+.pf-title{display:flex;align-items:baseline;gap:16px;margin-bottom:28px}
+.pf-title h2{font-family:'Public Sans',sans-serif;font-weight:500;font-size:26px;
+  letter-spacing:-.022em;color:var(--ink)}
+.pf-title .serif{font-size:26px;color:var(--muted);margin-left:-4px}
+.pf-title .hint{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--dim);letter-spacing:.08em}
+.pf-rows{display:flex;flex-direction:column;gap:3px}
+.pf-row{display:grid;grid-template-columns:250px 1fr 68px;align-items:center;gap:24px;
+  padding:10px 0;border-bottom:1px solid var(--rule);transition:background .12s}
+.pf-row:hover{background:rgba(0,0,0,.015)}
+.pf-row:last-child{border-bottom:none}
+.pf-name{color:var(--ink);font-size:15px;font-weight:500;letter-spacing:-.005em}
+.pf-name small{display:block;font-family:'JetBrains Mono',monospace;font-weight:400;
+  font-size:10.5px;color:var(--dim);margin-top:3px;letter-spacing:.08em;text-transform:uppercase}
+.pf-bricks{display:flex;gap:4px;flex-wrap:wrap}
+.brick{flex:1 1 auto;min-width:56px;max-width:88px;height:36px;
+  background:var(--tk);cursor:pointer;border-radius:2px;
+  position:relative;transition:transform .15s,filter .15s}
+.brick:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.brick[data-b="pronto"]{--tk:var(--pronto)}
+.brick[data-b="desenv"]{--tk:var(--desenv)}
+.brick[data-b="plan"]{--tk:var(--plan)}
+.brick[data-b="aguard"]{--tk:var(--aguard)}
+.brick.dim{opacity:.16}
+.pf-total{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--ink);
+  text-align:right;font-weight:500}
+.pf-total small{display:block;font-family:'JetBrains Mono',monospace;font-weight:400;
+  font-size:10px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+
+/* Tooltip */
+.tip{position:fixed;pointer-events:none;background:#FBFCFA;
+  border:1px solid var(--rule-strong);border-radius:3px;
+  padding:12px 16px;z-index:100;font-size:13.5px;max-width:340px;opacity:0;
+  transition:opacity .12s;box-shadow:0 12px 32px rgba(19,22,25,.12)}
+.tip.show{opacity:1}
+.tip .title{color:var(--ink);font-weight:500;line-height:1.35;margin-bottom:8px;font-size:14px}
+.tip .meta{font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  color:var(--muted);letter-spacing:.03em;line-height:1.7}
+.tip .meta strong{color:var(--ink);font-weight:500}
+.tip .status{display:inline-block;padding:3px 9px;border-radius:2px;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;
+  letter-spacing:.08em;margin-top:8px;text-transform:uppercase;color:#fff}
+.tip .status[data-b="pronto"]{background:var(--pronto)}
+.tip .status[data-b="desenv"]{background:var(--desenv)}
+.tip .status[data-b="plan"]{background:var(--plan)}
+.tip .status[data-b="aguard"]{background:var(--aguard)}
+
+/* ═══════ TAB 1 · SOURCES ═══════ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-bottom:48px}
+.pane-head{display:flex;align-items:baseline;gap:14px;margin-bottom:24px;
+  padding-bottom:16px;border-bottom:1px solid var(--rule)}
+.pane-head h3{font-family:'Public Sans',sans-serif;font-weight:500;
+  font-size:18px;letter-spacing:-.015em;color:var(--ink)}
+.pane-head .serif{color:var(--muted);font-size:18px}
+.pane-head .n{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--accent);letter-spacing:.06em;font-weight:500}
+.src-list{display:flex;flex-direction:column;gap:0}
+.src-row{display:grid;grid-template-columns:200px 1fr 48px;align-items:center;gap:20px;
+  padding:13px 0;font-size:14px;border-bottom:1px solid var(--rule)}
+.src-row:last-child{border-bottom:none}
+.src-name{color:var(--ink);font-weight:500}
+.src-bar{height:5px;background:rgba(0,0,0,.04);position:relative;border-radius:2px;overflow:hidden}
+.src-bar i{display:block;height:100%;background:var(--primary)}
+.src-bar.ext i{background:var(--accent)}
+.src-count{font-family:'JetBrains Mono',monospace;font-size:13.5px;color:var(--ink);
+  text-align:right;font-weight:500}
+
+/* ═══════ TAB 2 · FILTERS ═══════ */
+.filters{padding:20px 22px;background:var(--card);border:1px solid var(--rule);
+  border-radius:3px;margin-bottom:28px}
+.f-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.f-lbl{font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-right:6px;font-weight:500}
+.chip{background:var(--card);border:1px solid var(--rule-strong);
+  padding:8px 14px;font-size:13.5px;color:var(--ink-soft);cursor:pointer;
+  font-family:inherit;border-radius:2px;font-weight:500;
+  display:inline-flex;align-items:center;gap:9px;transition:all .12s}
+.chip:hover{color:var(--ink);border-color:var(--ink)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--card)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--tk)}
+.chip[data-b="pronto"]{--tk:var(--pronto)}
+.chip[data-b="desenv"]{--tk:var(--desenv)}
+.chip[data-b="plan"]{--tk:var(--plan)}
+.chip[data-b="aguard"]{--tk:var(--aguard)}
+.chip .cn{font-family:'JetBrains Mono',monospace;font-size:11px;
+  padding:1px 6px;background:rgba(0,0,0,.06);color:inherit;border-radius:2px;font-weight:500}
+.chip.on .cn{background:rgba(255,255,255,.18)}
+.sep{width:1px;height:24px;background:var(--rule-strong);margin:0 6px}
+.search{margin-left:auto;font-family:inherit;font-size:14px;padding:8px 14px;
+  border:1px solid var(--rule-strong);background:var(--paper);
+  min-width:300px;color:var(--ink);border-radius:2px}
+.search::placeholder{color:var(--dim)}
+.search:focus{outline:none;border-color:var(--primary);background:var(--card)}
+.clear{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);
+  background:none;border:none;cursor:pointer;letter-spacing:.1em;padding:8px 6px;
+  text-transform:uppercase;font-weight:500}
+.clear:hover{color:var(--ink)}
+.f-summary{margin-top:12px;padding-top:12px;border-top:1px solid var(--rule);
+  font-size:12.5px;color:var(--muted);display:none;font-family:'JetBrains Mono',monospace;
+  letter-spacing:.04em}
+.f-summary.show{display:block}
+.f-summary strong{color:var(--ink);font-weight:500}
+
+/* ═══════ TAB 2 · TABLE ═══════ */
+.detail-meta{display:flex;align-items:baseline;gap:16px;margin-bottom:24px}
+.detail-meta h2{font-family:'Public Sans',sans-serif;font-weight:500;font-size:26px;
+  letter-spacing:-.022em;color:var(--ink)}
+.detail-meta .serif{font-size:26px;color:var(--muted);margin-left:-4px}
+.detail-meta .count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--muted);letter-spacing:.06em}
+
+.table-wrap{background:var(--card);border:1px solid var(--rule);
+  border-radius:3px;overflow:hidden}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{padding:15px 20px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.14em;
+  text-transform:uppercase;text-align:left;border-bottom:1px solid var(--rule-strong);
+  background:var(--card-hi)}
+.tbl tbody td{padding:16px 20px;border-bottom:1px solid var(--rule);
+  font-size:14px;vertical-align:top;color:var(--muted)}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr{transition:background .1s;box-shadow:inset 3px 0 0 var(--tk)}
+.tbl tbody tr:hover{background:rgba(0,0,0,.015)}
+.tbl tbody tr[data-b="pronto"]{--tk:var(--pronto)}
+.tbl tbody tr[data-b="desenv"]{--tk:var(--desenv)}
+.tbl tbody tr[data-b="plan"]{--tk:var(--plan)}
+.tbl tbody tr[data-b="aguard"]{--tk:var(--aguard)}
+.t-cat{font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:.08em;text-transform:uppercase;width:230px;color:var(--dim);font-weight:500}
+.t-act{color:var(--ink);font-weight:500;line-height:1.42;font-size:14.5px;
+  letter-spacing:-.005em}
+.t-fund{width:180px;font-size:13.5px}
+.t-miss{color:var(--aguard);font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  letter-spacing:.06em;font-weight:500}
+.t-stat{width:190px}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:4px 10px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;
+  letter-spacing:.08em;border-radius:2px;text-transform:uppercase}
+.badge .d{width:7px;height:7px;border-radius:50%;background:var(--tk)}
+.badge[data-b="pronto"]{--tk:var(--pronto);color:var(--pronto);background:var(--pronto-tint)}
+.badge[data-b="desenv"]{--tk:var(--desenv);color:var(--desenv);background:var(--desenv-tint)}
+.badge[data-b="plan"]{--tk:var(--plan);color:var(--plan);background:var(--plan-tint)}
+.badge[data-b="aguard"]{--tk:var(--aguard);color:var(--aguard);background:var(--aguard-tint)}
+.empty{padding:48px;text-align:center;color:var(--muted);font-size:14.5px}
+.empty .serif{color:var(--ink)}
+
+/* ═══════ FOOTER ═══════ */
+.foot{margin-top:64px;padding-top:28px;border-top:1px solid var(--rule);
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);
+  letter-spacing:.05em;line-height:1.9;max-width:820px}
+.foot strong{color:var(--muted);font-weight:500}
+
+@media(max-width:1200px){
+  .status-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:1100px){
+  body{padding:32px 22px 60px}
+  .two-col{grid-template-columns:1fr;gap:36px}
+}
+@media(max-width:820px){
+  .status-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:720px){
+  .status-grid{grid-template-columns:1fr}
+  .pf-row{grid-template-columns:1fr;gap:10px}
+  .pf-total{text-align:left}
+  .t-cat{display:none}
+  .search{min-width:100%;margin-left:0}
+}
+
+/* 5º bucket · Processo contínuo */
+.stcard[data-b="continuo"]{--tk:var(--continuo);--tint:var(--continuo-tint)}
+.brick[data-b="continuo"]{--tk:var(--continuo)}
+.chip[data-b="continuo"]{--tk:var(--continuo)}
+.tbl tbody tr[data-b="continuo"]{--tk:var(--continuo)}
+.badge[data-b="continuo"]{--tk:var(--continuo);color:var(--continuo);background:var(--continuo-tint)}
+.tip .status[data-b="continuo"]{background:var(--continuo)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══════ HEADER ═══════ -->
+<header class="head">
+  <div class="eyebrow">Ladis · CGCT · DIIAV · INPE</div>
+  <h1>Sistema MonitoraEA<span class="tag serif">painel institucional</span></h1>
+  <p class="h-sub">Infraestrutura digital nacional para monitoramento e avaliação da Política Nacional de Educação Ambiental, institucionalizada pelo ProNAMEA.</p>
+</header>
+
+<!-- ═══════ TABS ═══════ -->
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="panorama">Panorama <span class="n">01</span></button>
+  <button class="tab-btn" data-tab="detalhe">Detalhamento <span class="n">02</span></button>
+</nav>
+
+<!-- ═══════ TAB 1 · PANORAMA ═══════ -->
+<div class="tab-panel active" id="tab-panorama">
+
+  <div class="status-grid" id="status-grid"></div>
+
+  <div class="portfolio">
+    <div class="pf-title">
+      <h2>Portfólio de frentes<span class="serif"> , por eixo</span></h2>
+      <span class="hint">passe o cursor para inspecionar · clique para detalhar</span>
+    </div>
+    <div class="pf-rows" id="pf-rows"></div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="pane-head">
+        <h3>Sustentação interna</h3>
+        <span class="serif">Inpe</span>
+        <span class="n" id="int-total"></span>
+      </div>
+      <div class="src-list" id="src-int"></div>
+    </div>
+    <div>
+      <div class="pane-head">
+        <h3>Parceiros externos</h3>
+        <span class="serif">seis fontes</span>
+        <span class="n" id="ext-total"></span>
+      </div>
+      <div class="src-list" id="src-ext"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════ TAB 2 · DETALHE ═══════ -->
+<div class="tab-panel" id="tab-detalhe">
+
+  <div class="detail-meta">
+    <h2>Frentes em detalhe<span class="serif"> , com filtros</span></h2>
+    <span class="count" id="detail-count">48 de 48</span>
+  </div>
+
+  <div class="filters">
+    <div class="f-row">
+      <span class="f-lbl">Estado</span>
+      <button class="chip" data-b="pronto"><span class="dot"></span>Pronto <span class="cn" id="c-pronto"></span></button>
+      <button class="chip" data-b="desenv"><span class="dot"></span>Em desenvolvimento <span class="cn" id="c-desenv"></span></button>
+      <button class="chip" data-b="plan"><span class="dot"></span>Em planejamento <span class="cn" id="c-plan"></span></button>
+      <button class="chip" data-b="aguard"><span class="dot"></span>Aguardando financiamento <span class="cn" id="c-aguard"></span></button>
+      <button class="chip" data-b="continuo"><span class="dot"></span>Processo contínuo <span class="cn" id="c-continuo"></span></button>
+      <span class="sep"></span>
+      <button class="clear" id="clear">↺ limpar</button>
+      <input class="search" id="search" type="text" placeholder="Buscar frente, eixo ou fonte" aria-label="Buscar">
+    </div>
+    <div class="f-summary" id="f-summary"></div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th class="t-cat">Eixo</th>
+          <th>Frente</th>
+          <th style="width:180px">Fonte</th>
+          <th style="width:190px">Estado</th>
+        </tr>
+      </thead>
+      <tbody id="tbl-body"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="foot">
+  Base institucional <strong>NA</strong> representa sustentação orçamentária direta do INPE. Frentes classificadas como <strong>aguardando financiamento</strong> operam via esforço complementar da Anppea ou aguardam definição de aporte. O painel espelha o estado atual do ProNAMEA e é revisto conforme novos instrumentos institucionais entram em vigor.
+</footer>
+
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+const DATA=[
+ {cat:"Gestão administrativa",items:[
+  {a:"Captação de recursos",f:"INPE",s:"continuado"},
+  {a:"Operação de recursos",f:"INPE",s:"continuado"},
+  {a:"Prestação de contas de recursos",f:"INPE",s:"continuado"},
+  {a:"Processos administrativos de parcerias institucionais",f:"INPE",s:"continuado"},
+  {a:"Monitoramento processos ProNAMEA",f:"INPE",s:"continuado"}]},
+ {cat:"Tecnologia e dados",items:[
+  {a:"Desenvolvimento tecnológico continuado",f:"Todos",s:"continuado"},
+  {a:"Gestão de infraestrutura de dados e aplicações",f:"NA",s:"continuado"},
+  {a:"Ciência de dados",f:"Sem fonte",s:"não iniciado"},
+  {a:"Rede social endógena",f:"Sem fonte",s:"design"},
+  {a:"Ferramentas de análise e modelagem de redes",f:"FAPESP",s:"design"}]},
+ {cat:"Produção e documentação",items:[
+  {a:"Produção técnica",f:"INPE",s:"continuado"},
+  {a:"Produção científica",f:"INPE",s:"continuado"},
+  {a:"Produção político institucional",f:"Sem fonte",s:"continuado"},
+  {a:"Gestão de documentação técnica",f:"INPE",s:"continuado"},
+  {a:"Gestão de documentação institucional",f:"INPE",s:"continuado"},
+  {a:"Registros e patentes",f:"INPE",s:"não iniciado"}]},
+ {cat:"Construção participativa de indicadores",items:[
+  {a:"PPEA por organizações governamentais",f:"Emenda Parlamentar",s:"entregue"},
+  {a:"Projetos de EA por organizações não governamentais",f:"Sem fonte",s:"entregue"},
+  {a:"Projetos de EA em escolas e IES",f:"Sem fonte",s:"não iniciado"},
+  {a:"Colegiados de PPEA",f:"CNPq",s:"entregue"},
+  {a:"Centros, núcleos e equipamentos de EA",f:"Erasmus+",s:"não iniciado"},
+  {a:"Projetos e ações de EA de base comunitária",f:"MMA",s:"não iniciado"},
+  {a:"Projetos e ações de EA vinculadas ao PPPZCM",f:"GIZ",s:"demanda revisão"},
+  {a:"Projetos de EA vinculados ao LAF",f:"Sem fonte",s:"não iniciado"}]},
+ {cat:"Monitoramento e aprendizagem institucional",items:[
+  {a:"CIEAs",f:"MMA",s:"design"},
+  {a:"Protocolo de intenções com SEMAs dos 27 estados",f:"MMA",s:"design"},
+  {a:"Conferências nacionais de meio ambiente e infantojuvenil de EA",f:"Sem fonte",s:"não iniciado"},
+  {a:"Rede Planetária do Tratado de EA para SSRG",f:"Sem fonte",s:"não iniciado"},
+  {a:"Rede Internacional de Centros de Educação Ambiental",f:"Sem fonte",s:"não iniciado"}]},
+ {cat:"Desenvolvimento de métodos",items:[
+  {a:"IITEA",f:"INPE",s:"design"},
+  {a:"SOM para EHECSA",f:"INPE",s:"design"},
+  {a:"EES",f:"INPE",s:"design"},
+  {a:"Capacidade adaptativa pela EA",f:"CNPq",s:"design"},
+  {a:"Risco climático",f:"CNPq",s:"design"},
+  {a:"Análise e modelagem de redes",f:"INPE",s:"design"},
+  {a:"Geração de comunidades emergentes",f:"Sem fonte",s:"não iniciado"}]},
+ {cat:"Formação",items:[
+  {a:"EaD PPEA",f:"MMA",s:"entregue"},
+  {a:"EaD MES",f:"MMA",s:"design"},
+  {a:"Formação para prefeituras e conselhos municipais",f:"Sem fonte",s:"continuado"},
+  {a:"Formação para UCs e CBHs",f:"Sem fonte",s:"continuado"}]},
+ {cat:"Suporte ao usuário",items:[
+  {a:"Resposta a contatos por e-mail",f:"Sem fonte",s:"continuado"},
+  {a:"Gestão de requisições da plataforma",f:"Sem fonte",s:"continuado"},
+  {a:"Tutoria a usuários",f:"Sem fonte",s:"continuado"}]},
+ {cat:"Comunicação",items:[
+  {a:"Produção de conteúdo para redes sociais",f:"Sem fonte",s:"continuado"},
+  {a:"Gestão de redes sociais",f:"Sem fonte",s:"continuado"},
+  {a:"Incidência em mídias",f:"Sem fonte",s:"continuado"}]},
+ {cat:"Relacionamento institucional",items:[
+  {a:"Representação em conselhos municipais, estaduais e federal de PPEA",f:"Sem fonte",s:"continuado"},
+  {a:"Negociação com órgãos governamentais e não governamentais",f:"Sem fonte",s:"continuado"}]}
+];
+
+const BUCKETS=[
+  {k:"pronto",label:"Pronto",desc:"Módulos entregues à sociedade, base de credibilidade do sistema."},
+  {k:"desenv",label:"Em desenvolvimento",desc:"Design ativo com metodologia e fonte definidas."},
+  {k:"plan",label:"Em planejamento",desc:"Escopo pronto no ProNAMEA, com fonte, aguardando início."},
+  {k:"aguard",label:"Aguardando financiamento",desc:"Operam ou aguardam início sem fonte institucional formalizada."},
+  {k:"continuo",label:"Processo contínuo",desc:"Operação institucional baseline, sustentada pela infraestrutura do INPE."}
+];
+
+function bucketOf(i){
+  const noFund=(i.f==="Sem fonte");
+  // Entregue sempre representa entrega, independente da fonte
+  if(i.s==="entregue") return "pronto";
+  // Sem fonte no eixo Relacionamento institucional se comporta como processo contínuo
+  if(noFund && i.cat==="Relacionamento institucional") return "continuo";
+  // Sem fonte em qualquer outro caso vira aguardando
+  if(noFund) return "aguard";
+  // Com fonte
+  if(i.s==="não iniciado") return "plan";
+  if(i.s==="design" || i.s==="demanda revisão") return "desenv";
+  if(i.s==="continuado") return "continuo";
+  return "aguard";
+}
+const all=DATA.flatMap(c=>c.items.map(i=>{
+  const it={...i,cat:c.cat};
+  return {...it,b:bucketOf(it)};
+}));
+
+let fBucket=null, query="";
+
+const cnt=b=>all.filter(i=>i.b===b).length;
+BUCKETS.forEach(b=>{
+  const el=document.getElementById(`c-${b.k}`);
+  if(el) el.textContent=cnt(b.k);
+});
+
+// ————— TAB 1: Status cards
+function renderStatusCards(){
+  const el=document.getElementById("status-grid");
+  el.innerHTML=BUCKETS.map(b=>{
+    const n=cnt(b.k);
+    const active=fBucket===b.k?"active":"";
+    return `<div class="stcard ${active}" data-b="${b.k}">
+      <div class="st-dot"></div>
+      <div class="st-label">${b.label}</div>
+      <div class="st-num">${n}<span class="of">/48</span></div>
+      <div class="st-desc">${b.desc}</div>
+    </div>`;
+  }).join("");
+  el.querySelectorAll(".stcard").forEach(c=>{
+    c.addEventListener("click",()=>{
+      const b=c.dataset.b;
+      fBucket=(fBucket===b)?null:b;
+      renderStatusCards();
+      renderPortfolio();
+    });
+  });
+}
+
+// ————— TAB 1: Portfolio grid
+function renderPortfolio(){
+  const el=document.getElementById("pf-rows");
+  el.innerHTML=DATA.map(c=>{
+    const items=c.items.map(i=>{
+      const it={...i,cat:c.cat};
+      return {...it,b:bucketOf(it)};
+    });
+    const bricks=items.map(i=>{
+      const dim=(fBucket && i.b!==fBucket)?"dim":"";
+      const tipData=JSON.stringify({
+        a:i.a,f:i.f,s:i.s,b:i.b,
+        bLabel:BUCKETS.find(x=>x.k===i.b).label
+      }).replace(/"/g,'&quot;');
+      return `<div class="brick ${dim}" data-b="${i.b}" data-tip="${tipData}"></div>`;
+    }).join("");
+    return `<div class="pf-row">
+      <div class="pf-name">${c.cat}<small>${c.items.length} FRENTE${c.items.length!==1?'S':''}</small></div>
+      <div class="pf-bricks">${bricks}</div>
+      <div class="pf-total">${c.items.length}<small>total</small></div>
+    </div>`;
+  }).join("");
+  const tip=document.getElementById("tip");
+  el.querySelectorAll(".brick").forEach(br=>{
+    br.addEventListener("mouseenter",()=>{
+      const d=JSON.parse(br.dataset.tip.replace(/&quot;/g,'"'));
+      tip.innerHTML=`
+        <div class="title">${d.a}</div>
+        <div class="meta">Fonte, <strong>${d.f==='Sem fonte'?'aguardando definição':d.f}</strong></div>
+        <span class="status" data-b="${d.b}">${d.bLabel}</span>
+      `;
+      tip.classList.add("show");
+    });
+    br.addEventListener("mousemove",e=>{
+      const rect=tip.getBoundingClientRect();
+      const x=Math.min(e.clientX+14, window.innerWidth-rect.width-16);
+      const y=Math.min(e.clientY+14, window.innerHeight-rect.height-16);
+      tip.style.left=x+"px";
+      tip.style.top=y+"px";
+    });
+    br.addEventListener("mouseleave",()=>tip.classList.remove("show"));
+    br.addEventListener("click",()=>{
+      const d=JSON.parse(br.dataset.tip.replace(/&quot;/g,'"'));
+      switchTab("detalhe");
+      query=d.a.toLowerCase();
+      document.getElementById("search").value=d.a;
+      fBucket=null;
+      renderChips();
+      renderTable();
+      renderSummary();
+    });
+  });
+}
+
+// ————— TAB 1: Sources
+function renderSources(){
+  const internal=[
+    {n:"INPE, sustentação direta",c:all.filter(i=>i.f==="INPE").length},
+    {n:"INPE via projetos multi-fonte",c:all.filter(i=>i.f==="Todos").length},
+    {n:"INPE, infraestrutura NA",c:all.filter(i=>i.f==="NA").length}
+  ].filter(x=>x.c>0);
+  const external=[
+    {n:"MMA",c:all.filter(i=>i.f==="MMA").length},
+    {n:"CNPq",c:all.filter(i=>i.f==="CNPq").length},
+    {n:"FAPESP",c:all.filter(i=>i.f==="FAPESP").length},
+    {n:"Emenda Parlamentar",c:all.filter(i=>i.f==="Emenda Parlamentar").length},
+    {n:"Erasmus+",c:all.filter(i=>i.f==="Erasmus+").length},
+    {n:"GIZ",c:all.filter(i=>i.f==="GIZ").length}
+  ].filter(x=>x.c>0).sort((a,b)=>b.c-a.c);
+  const max=Math.max(...internal.map(x=>x.c),...external.map(x=>x.c));
+  const build=(list,cls)=>list.map(x=>`
+    <div class="src-row">
+      <div class="src-name">${x.n}</div>
+      <div class="src-bar ${cls}"><i style="width:${(x.c/max)*100}%"></i></div>
+      <div class="src-count">${String(x.c).padStart(2,'0')}</div>
+    </div>`).join("");
+  document.getElementById("src-int").innerHTML=build(internal,"");
+  document.getElementById("src-ext").innerHTML=build(external,"ext");
+  const tI=internal.reduce((a,b)=>a+b.c,0);
+  const tE=external.reduce((a,b)=>a+b.c,0);
+  document.getElementById("int-total").textContent=`${tI} frentes`;
+  document.getElementById("ext-total").textContent=`${tE} frentes`;
+}
+
+// ————— TAB 2: Filters, chips, table
+function filteredItems(){
+  return all.filter(i=>{
+    if(fBucket && i.b!==fBucket) return false;
+    if(query){
+      const hay=(i.a+" "+i.f+" "+i.cat).toLowerCase();
+      if(!hay.includes(query)) return false;
+    }
+    return true;
+  });
+}
+
+function renderChips(){
+  document.querySelectorAll(".chip[data-b]").forEach(ch=>{
+    ch.classList.toggle("on",ch.dataset.b===fBucket);
+  });
+}
+
+function renderSummary(){
+  const el=document.getElementById("f-summary");
+  const parts=[];
+  if(fBucket){ parts.push(`estado <strong>${BUCKETS.find(x=>x.k===fBucket).label.toLowerCase()}</strong>`); }
+  if(query){ parts.push(`busca <strong>"${query}"</strong>`); }
+  if(parts.length){
+    el.innerHTML=`Filtros ativos · ${parts.join(" · ")}`;
+    el.classList.add("show");
+  } else {
+    el.classList.remove("show");
+  }
+}
+
+function renderTable(){
+  const rows=filteredItems();
+  document.getElementById("detail-count").textContent=`${rows.length} de 48`;
+  const body=document.getElementById("tbl-body");
+  if(!rows.length){
+    body.innerHTML=`<tr><td colspan="4" class="empty">Nenhuma frente corresponde <span class="serif">aos filtros aplicados</span></td></tr>`;
+    return;
+  }
+  const bOrder={aguard:0,plan:1,desenv:2,pronto:3,continuo:4};
+  const cOrder=Object.fromEntries(DATA.map((c,i)=>[c.cat,i]));
+  rows.sort((a,b)=>bOrder[a.b]-bOrder[b.b] || cOrder[a.cat]-cOrder[b.cat]);
+  body.innerHTML=rows.map(i=>{
+    const b=BUCKETS.find(x=>x.k===i.b);
+    return `<tr data-b="${i.b}">
+      <td class="t-cat">${i.cat}</td>
+      <td class="t-act">${i.a}</td>
+      <td class="t-fund">${i.f==='Sem fonte'?'<span class="t-miss">AGUARDANDO</span>':i.f}</td>
+      <td class="t-stat"><span class="badge" data-b="${i.b}"><span class="d"></span>${b.label}</span></td>
+    </tr>`;
+  }).join("");
+}
+
+// ————— Handlers
+document.querySelectorAll(".chip[data-b]").forEach(ch=>{
+  ch.addEventListener("click",()=>{
+    const b=ch.dataset.b;
+    fBucket=(fBucket===b)?null:b;
+    renderChips(); renderSummary(); renderTable();
+    renderStatusCards(); renderPortfolio();
+  });
+});
+document.getElementById("clear").addEventListener("click",()=>{
+  fBucket=null; query="";
+  document.getElementById("search").value="";
+  renderChips(); renderSummary(); renderTable();
+  renderStatusCards(); renderPortfolio();
+});
+document.getElementById("search").addEventListener("input",e=>{
+  query=e.target.value.trim().toLowerCase();
+  renderSummary(); renderTable();
+});
+
+// ————— Tabs
+function switchTab(name){
+  document.querySelectorAll(".tab-btn").forEach(b=>{
+    b.classList.toggle("active",b.dataset.tab===name);
+  });
+  document.querySelectorAll(".tab-panel").forEach(p=>{
+    p.classList.toggle("active",p.id===`tab-${name}`);
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>switchTab(btn.dataset.tab));
+});
+
+// ————— Initial render
+renderStatusCards();
+renderPortfolio();
+renderSources();
+renderChips();
+renderTable();
+</script>
+</body>
+</html>
